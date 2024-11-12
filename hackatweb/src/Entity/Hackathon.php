@@ -37,9 +37,16 @@ class Hackathon
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'Hackathon')]
     private Collection $inscriptions;
 
+    /**
+     * @var Collection<int, Evenement>
+     */
+    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'hackathon')]
+    private Collection $evenements;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->evenements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,6 +138,36 @@ class Hackathon
             // set the owning side to null (unless already changed)
             if ($inscription->getHackathon() === $this) {
                 $inscription->setHackathon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenements(): Collection
+    {
+        return $this->evenements;
+    }
+
+    public function addEvenement(Evenement $evenement): static
+    {
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements->add($evenement);
+            $evenement->setHackathon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): static
+    {
+        if ($this->evenements->removeElement($evenement)) {
+            // set the owning side to null (unless already changed)
+            if ($evenement->getHackathon() === $this) {
+                $evenement->setHackathon(null);
             }
         }
 
