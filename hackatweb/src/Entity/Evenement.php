@@ -29,6 +29,7 @@ class Evenement
     #[ORM\Column(length: 255)]
     private ?string $salle = null;
 
+    #[ORM\JoinColumn(name: "idHackathon", referencedColumnName :"id")]
     #[ORM\ManyToOne(inversedBy: 'evenements')]
     private ?hackathon $hackathon = null;
 
