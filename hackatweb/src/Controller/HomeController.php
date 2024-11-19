@@ -15,12 +15,16 @@ class HomeController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $repository = $em->getRepository(Hackathon::class);
+        $lesHackathonsTrie = $repository->findBy([],['date_debut' => 'ASC']);
         $lesHackathons = $repository->findAll();
     
         return $this->render('home/index.html.twig', [
             'lesHackathons' => $lesHackathons,
+            'lesHackathonsAfficher' => $lesHackathons,
+            'lesHackathonsTrie' => $lesHackathonsTrie
         ]);
     }
+    
     #[Route('/home/{id}', name: 'app_unHackathon')]
     public function showOneSerie(EntityManagerInterface $em, int $id): Response
     {

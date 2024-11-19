@@ -8,8 +8,10 @@
 
 <h1>Il y a {{ lesHackathons|length }} Hackathon(s)</h1>
 
+{{lesHackathonsAfficher == lesHackathonsTrie }}
+
 <div class="row row-cols-md-4">
-    {% for unHackathon in lesHackathons %}
+    {% for unHackathon in lesHackathonsAfficher %}
     <div class="cols mb-4">
         <div class="card">
             <div class="card-body">
