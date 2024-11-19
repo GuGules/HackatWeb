@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\InscriptionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,11 +19,16 @@ class Inscription
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_saisie = null;
 
-    #[ORM\OneToOne(mappedBy: 'inscription', cascade: ['persist', 'remove'])]
-    private ?Participants $participants = null;
-
     #[ORM\ManyToOne(inversedBy: 'inscriptions')]
     private ?Hackathon $Hackathon = null;
+
+    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    private ?Participants $Participants = null;
+
+    public function __construct()
+    {
+        $this->idParticipants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -40,28 +47,6 @@ class Inscription
         return $this;
     }
 
-    public function getParticipants(): ?Participants
-    {
-        return $this->participants;
-    }
-
-    public function setParticipants(?Participants $participants): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($participants === null && $this->participants !== null) {
-            $this->participants->setInscription(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($participants !== null && $participants->getInscription() !== $this) {
-            $participants->setInscription($this);
-        }
-
-        $this->participants = $participants;
-
-        return $this;
-    }
-
     public function getHackathon(): ?Hackathon
     {
         return $this->Hackathon;
@@ -70,6 +55,18 @@ class Inscription
     public function setHackathon(?Hackathon $Hackathon): static
     {
         $this->Hackathon = $Hackathon;
+
+        return $this;
+    }
+
+    public function getParticipants(): ?Participants
+    {
+        return $this->idParticipants;
+    }
+
+    public function setParticipants(?Participants $idParticipants): static
+    {
+        $this->idParticipants = $idParticipants;
 
         return $this;
     }
