@@ -37,9 +37,16 @@ class Hackathon
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'Hackathon')]
     private Collection $inscriptions;
 
+    /**
+     * @var Collection<int, Evenement>
+     */
+    #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'hackathon')]
+    private Collection $evenements;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->evenements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,48 +66,48 @@ class Hackathon
         return $this;
     }
 
-    public function getDateDebut(): ?\DateTimeInterface
+    public function getDate_debut(): ?\DateTimeInterface
     {
         return $this->date_debut;
     }
 
-    public function setDateDebut(\DateTimeInterface $date_debut): static
+    public function setDate_debut(\DateTimeInterface $date_debut): static
     {
         $this->date_debut = $date_debut;
 
         return $this;
     }
 
-    public function getDateLimiteReg(): ?\DateTimeInterface
+    public function getDate_limiteReg(): ?\DateTimeInterface
     {
         return $this->date_limiteReg;
     }
 
-    public function setDateLimiteReg(\DateTimeInterface $date_limiteReg): static
+    public function setDate_limiteReg(\DateTimeInterface $date_limiteReg): static
     {
         $this->date_limiteReg = $date_limiteReg;
 
         return $this;
     }
 
-    public function getDateFin(): ?\DateTimeInterface
+    public function getDate_fin(): ?\DateTimeInterface
     {
         return $this->date_fin;
     }
 
-    public function setDateFin(\DateTimeInterface $date_fin): static
+    public function setDate_fin(\DateTimeInterface $date_fin): static
     {
         $this->date_fin = $date_fin;
 
         return $this;
     }
 
-    public function getNbPlaces(): ?int
+    public function getNb_places(): ?int
     {
         return $this->nb_places;
     }
 
-    public function setNbPlaces(int $nb_places): static
+    public function setNb_places(int $nb_places): static
     {
         $this->nb_places = $nb_places;
 
@@ -131,6 +138,36 @@ class Hackathon
             // set the owning side to null (unless already changed)
             if ($inscription->getHackathon() === $this) {
                 $inscription->setHackathon(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evenement>
+     */
+    public function getEvenements(): Collection
+    {
+        return $this->evenements;
+    }
+
+    public function addEvenement(Evenement $evenement): static
+    {
+        if (!$this->evenements->contains($evenement)) {
+            $this->evenements->add($evenement);
+            $evenement->setHackathon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvenement(Evenement $evenement): static
+    {
+        if ($this->evenements->removeElement($evenement)) {
+            // set the owning side to null (unless already changed)
+            if ($evenement->getHackathon() === $this) {
+                $evenement->setHackathon(null);
             }
         }
 

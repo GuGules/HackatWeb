@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,8 +36,16 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $URLPortfolio = null;
 
-    #[ORM\OneToOne(inversedBy: 'participants', cascade: ['persist', 'remove'])]
-    private ?Inscription $inscription = null;
+    /**
+     * @var Collection<int, Inscription>
+     */
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'Participants')]
+    private Collection $Inscriptions;
+
+    public function __construct()
+    {
+        $this->idInscriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -109,14 +119,32 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getInscription(): ?Inscription
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
     {
-        return $this->inscription;
+        return $this->idInscriptions;
     }
 
-    public function setInscription(?Inscription $inscription): static
+    public function addInscription(Inscription $idInscription): static
     {
-        $this->inscription = $inscription;
+        if (!$this->idInscriptions->contains($idInscription)) {
+            $this->idInscriptions->add($idInscription);
+            $idInscription->setIdParticipants($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $idInscription): static
+    {
+        if ($this->idInscriptions->removeElement($idInscription)) {
+            // set the owning side to null (unless already changed)
+            if ($idInscription->getIdParticipants() === $this) {
+                $idInscription->setIdParticipants(null);
+            }
+        }
 
         return $this;
     }

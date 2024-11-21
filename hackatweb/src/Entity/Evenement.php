@@ -29,6 +29,10 @@ class Evenement
     #[ORM\Column(length: 255)]
     private ?string $salle = null;
 
+    #[ORM\JoinColumn(name: "idHackathon", referencedColumnName :"id")]
+    #[ORM\ManyToOne(inversedBy: 'evenements')]
+    private ?hackathon $hackathon = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -85,6 +89,18 @@ class Evenement
     public function setSalle(string $salle): static
     {
         $this->salle = $salle;
+
+        return $this;
+    }
+
+    public function getHackathon(): ?hackathon
+    {
+        return $this->hackathon;
+    }
+
+    public function setHackathon(?hackathon $hackathon): static
+    {
+        $this->hackathon = $hackathon;
 
         return $this;
     }
