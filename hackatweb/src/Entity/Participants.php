@@ -7,9 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
-class Participants
+class Participants implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,6 +26,9 @@ class Participants
 
     #[ORM\Column(length: 255)]
     private ?string $mail = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateNaissance = null;
@@ -140,6 +145,60 @@ class Participants
                 $idInscription->setIdParticipants(null);
             }
         }
+
+        return $this;
+    }
+    /**
+ * @ORM\Column(type="json")
+ */
+ private $roles = [];
+
+    #[ORM\Column(length: 255)]
+    private ?string $login = null;
+ /**
+ * méthode qui renvoie une chaîne avec les informations voulues pour représenter un utilisateur.
+ */
+ public function getUserIdentifier(): string
+          {
+          return (string) $this->prenom." ".$this->nom;
+          }
+ public function getRoles(): array
+          {
+          $roles = $this->roles;
+          // guarantee every user at least has ROLE_USER
+          $roles[] = 'ROLE_USER';
+          return array_unique($roles);
+          }
+ public function setRoles(array $roles): self
+          {
+          $this->roles = $roles;
+          return $this;
+          }
+ public function getPassword(): string
+          {
+         // à remplacer éventuellement par la propriété contenant le mot de passe
+          return $this->password;
+          }
+ public function setPassword(string $password): self
+          {
+         // à remplacer éventuellement par la propriété contenant le mot de passe
+          $this->password = $password;
+          return $this;
+          }
+ public function eraseCredentials()
+          {
+          // If you store any temporary, sensitive data on the user, clear it here
+          // $this->plainPassword = null;
+          }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(string $login): static
+    {
+        $this->login = $login;
 
         return $this;
     }
