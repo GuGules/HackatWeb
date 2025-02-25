@@ -22,12 +22,15 @@ class Inscription
     #[ORM\ManyToOne(inversedBy: 'inscriptions')]
     private ?Hackathon $Hackathon = null;
 
-    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
-    private ?Participants $Participants = null;
+    /**
+     * @var Collection<int, Participants>
+     */
+    #[ORM\ManyToMany(targetEntity: Participants::class, mappedBy: 'inscriptions')]
+    private Collection $participants;
 
     public function __construct()
     {
-        $this->idParticipants = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,14 +62,29 @@ class Inscription
         return $this;
     }
 
-    public function getParticipants(): ?Participants
+    /**
+     * @return Collection<int, Participants>
+     */
+    public function getParticipants(): Collection
     {
-        return $this->idParticipants;
+        return $this->participants;
     }
 
-    public function setParticipants(?Participants $idParticipants): static
+    public function addParticipant(Participants $participant): static
     {
-        $this->idParticipants = $idParticipants;
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+            $participant->addInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(Participants $participant): static
+    {
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeInscription($this);
+        }
 
         return $this;
     }

@@ -11,12 +11,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('nom')
+            ->add('prenom')
+            ->add('mail')
+            ->add('dateNaissance', DateTimeType::class, ['years' => range(date('Y')-100, date('Y')+100)])
+            ->add('URLPortfolio')
             ->add('login')
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,

@@ -36,15 +36,9 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $URLPortfolio = null;
 
-    /**
-     * @var Collection<int, Inscription>
-     */
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'Participants')]
-    private Collection $Inscriptions;
-
     public function __construct()
     {
-        $this->idInscriptions = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,77 +113,54 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Inscription>
-     */
-    public function getInscriptions(): Collection
-    {
-        return $this->idInscriptions;
-    }
-
-    public function addInscription(Inscription $idInscription): static
-    {
-        if (!$this->idInscriptions->contains($idInscription)) {
-            $this->idInscriptions->add($idInscription);
-            $idInscription->setIdParticipants($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInscription(Inscription $idInscription): static
-    {
-        if ($this->idInscriptions->removeElement($idInscription)) {
-            // set the owning side to null (unless already changed)
-            if ($idInscription->getIdParticipants() === $this) {
-                $idInscription->setIdParticipants(null);
-            }
-        }
-
-        return $this;
-    }
-    /**
+ /**
  * @ORM\Column(type="json")
  */
  private $roles = [];
 
     #[ORM\Column(length: 255)]
     private ?string $login = null;
+
+    /**
+     * @var Collection<int, Inscription>
+     */
+    #[ORM\ManyToMany(targetEntity: Inscription::class, inversedBy: 'participants')]
+    private Collection $inscriptions;
  /**
  * méthode qui renvoie une chaîne avec les informations voulues pour représenter un utilisateur.
  */
  public function getUserIdentifier(): string
-          {
-          return (string) $this->prenom." ".$this->nom;
-          }
+                         {
+                         return (string) $this->prenom." ".$this->nom;
+                         }
  public function getRoles(): array
-          {
-          $roles = $this->roles;
-          // guarantee every user at least has ROLE_USER
-          $roles[] = 'ROLE_USER';
-          return array_unique($roles);
-          }
+                         {
+                         $roles = $this->roles;
+                         // guarantee every user at least has ROLE_USER
+                         $roles[] = 'ROLE_USER';
+                         return array_unique($roles);
+                         }
  public function setRoles(array $roles): self
-          {
-          $this->roles = $roles;
-          return $this;
-          }
+                         {
+                         $this->roles = $roles;
+                         return $this;
+                         }
  public function getPassword(): string
-          {
-         // à remplacer éventuellement par la propriété contenant le mot de passe
-          return $this->password;
-          }
+                         {
+                        // à remplacer éventuellement par la propriété contenant le mot de passe
+                         return $this->password;
+                         }
  public function setPassword(string $password): self
-          {
-         // à remplacer éventuellement par la propriété contenant le mot de passe
-          $this->password = $password;
-          return $this;
-          }
+                         {
+                        // à remplacer éventuellement par la propriété contenant le mot de passe
+                         $this->password = $password;
+                         return $this;
+                         }
  public function eraseCredentials()
-          {
-          // If you store any temporary, sensitive data on the user, clear it here
-          // $this->plainPassword = null;
-          }
+                         {
+                         // If you store any temporary, sensitive data on the user, clear it here
+                         // $this->plainPassword = null;
+                         }
 
     public function getLogin(): ?string
     {
@@ -199,6 +170,30 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogin(string $login): static
     {
         $this->login = $login;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): static
+    {
+        $this->inscriptions->removeElement($inscription);
 
         return $this;
     }
