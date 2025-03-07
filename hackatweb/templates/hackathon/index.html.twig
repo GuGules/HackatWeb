@@ -6,9 +6,13 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<h1>Il y a {{ lesHackathons|length }} Hackathon(s)</h1>
-
-{{lesHackathonsAfficher == lesHackathonsTrie }}
+{{ form_start(form) }}
+    {{ form_row(form.searchCriteria, {
+        label: 'Mot-Clé'
+    }) }}
+    <button type="submit" class="btn btn-primary">Faire la recherche</button>
+{{ form_end(form) }}
+<br>
 
 <div class="row row-cols-md-4">
     {% for unHackathon in lesHackathonsAfficher %}

@@ -124,43 +124,44 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Inscription>
      */
-    #[ORM\ManyToMany(targetEntity: Inscription::class, inversedBy: 'participants')]
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
     private Collection $inscriptions;
+
  /**
  * méthode qui renvoie une chaîne avec les informations voulues pour représenter un utilisateur.
  */
  public function getUserIdentifier(): string
-                         {
-                         return (string) $this->prenom." ".$this->nom;
-                         }
+                                        {
+                                        return (string) $this->prenom." ".$this->nom;
+                                        }
  public function getRoles(): array
-                         {
-                         $roles = $this->roles;
-                         // guarantee every user at least has ROLE_USER
-                         $roles[] = 'ROLE_USER';
-                         return array_unique($roles);
-                         }
+                                        {
+                                        $roles = $this->roles;
+                                        // guarantee every user at least has ROLE_USER
+                                        $roles[] = 'ROLE_USER';
+                                        return array_unique($roles);
+                                        }
  public function setRoles(array $roles): self
-                         {
-                         $this->roles = $roles;
-                         return $this;
-                         }
+                                        {
+                                        $this->roles = $roles;
+                                        return $this;
+                                        }
  public function getPassword(): string
-                         {
-                        // à remplacer éventuellement par la propriété contenant le mot de passe
-                         return $this->password;
-                         }
+                                        {
+                                       // à remplacer éventuellement par la propriété contenant le mot de passe
+                                        return $this->password;
+                                        }
  public function setPassword(string $password): self
-                         {
-                        // à remplacer éventuellement par la propriété contenant le mot de passe
-                         $this->password = $password;
-                         return $this;
-                         }
+                                        {
+                                       // à remplacer éventuellement par la propriété contenant le mot de passe
+                                        $this->password = $password;
+                                        return $this;
+                                        }
  public function eraseCredentials()
-                         {
-                         // If you store any temporary, sensitive data on the user, clear it here
-                         // $this->plainPassword = null;
-                         }
+                                        {
+                                        // If you store any temporary, sensitive data on the user, clear it here
+                                        // $this->plainPassword = null;
+                                        }
 
     public function getLogin(): ?string
     {
@@ -186,6 +187,7 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->inscriptions->contains($inscription)) {
             $this->inscriptions->add($inscription);
+            $inscription->setParticipant($this);
         }
 
         return $this;
@@ -193,8 +195,15 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeInscription(Inscription $inscription): static
     {
-        $this->inscriptions->removeElement($inscription);
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getParticipant() === $this) {
+                $inscription->setParticipant(null);
+            }
+        }
 
         return $this;
     }
+
+
 }

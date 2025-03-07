@@ -43,6 +43,15 @@ class Hackathon
     #[ORM\OneToMany(targetEntity: Evenement::class, mappedBy: 'hackathon')]
     private Collection $evenements;
 
+    #[ORM\Column(length: 255)]
+    private ?string $ville = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $rue = null;
+
+    #[ORM\Column(length: 5)]
+    private ?string $postalCode = null;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
@@ -173,4 +182,41 @@ class Hackathon
 
         return $this;
     }
+
+    public function getVille(): ?string
+    {
+        return $this->ville;
+    }
+
+    public function setVille(string $ville): static
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
+    public function getRue(): ?string
+    {
+        return $this->rue;
+    }
+
+    public function setRue(string $rue): static
+    {
+        $this->rue = $rue;
+
+        return $this;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+
+    public function setPostalCode(string $postalCode): static
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
 }
