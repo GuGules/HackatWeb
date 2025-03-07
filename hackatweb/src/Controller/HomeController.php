@@ -1,18 +1,74 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Hackathon;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Form\SearchFormType;
+use App\Entity\Inscription;
+use App\Repository\HackathonRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use DateTime;
 
 class HomeController extends AbstractController
 {
-    #[Route('/home', name: 'app_home')]
-    public function index(): Response
+    #[Route('', name: 'app_home')]
+    public function index(EntityManagerInterface $em): Response
+    {    
+        return $this->render('home.html.twig');
+    }
+
+    #[Route('/hackathons', name: 'app_hackathons')]
+    public function showHackathons(Request $request,EntityManagerInterface $em): Response
     {
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+        $repository = $em->getRepository(Hackathon::class);
+        $form = $this->createForm(SearchFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $searchCriteria = $form->get('searchCriteria')->getData();
+            $lesHackathons = $repository->findByVille($searchCriteria);
+        }
+        else {
+
+        $lesHackathonsTrie = $repository->findBy([],['date_debut' => 'ASC']);
+        $lesHackathons = $repository->findAll();
+
+        }
+    
+        return $this->render('hackathon/index.html.twig', [
+            'lesHackathonsAfficher' => $lesHackathons,
+            'form' => $form
         ]);
+    }
+    
+    #[Route('/hackathons/{id}', name: 'app_unHackathon')]
+    public function showOneSerie(EntityManagerInterface $em, int $id): Response
+    {
+        $repository = $em->getRepository(Hackathon::class);
+        $leHackathon = $repository->find($id);
+    
+        return $this->render('hackathon/details.html.twig', [
+            'leHackathon' => $leHackathon,
+        ]);
+    }
+
+    #[Route('/hackathons/{id}/inscription/', name: 'app_regHackathon')]
+    public function inscription(EntityManagerInterface $em, int $id):Response
+    {
+        $participant = $this->getUser();
+        $leHackathon = $em->getRepository(Hackathon::class)->find($id);
+        $inscription = new Inscription();
+        $inscription->setHackathon($leHackathon);
+        $inscription->setParticipant($participant);
+        $inscription->setDateSaisie(new \DateTime());
+        $leHackathon->addInscription($inscription);
+        $em->persist($inscription);
+        $em->flush();
+        $this->addFlash('success', 'Félicitations ! Vous êtes inscrit au hackathon !');
+        return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
     }
 }

@@ -3,11 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
-class Participants
+class Participants implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,14 +27,19 @@ class Participants
     #[ORM\Column(length: 255)]
     private ?string $mail = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $dateNaissance = null;
 
     #[ORM\Column(length: 255)]
     private ?string $URLPortfolio = null;
 
-    #[ORM\OneToOne(inversedBy: 'participants', cascade: ['persist', 'remove'])]
-    private ?Inscription $inscription = null;
+    public function __construct()
+    {
+        $this->inscriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -104,15 +113,97 @@ class Participants
         return $this;
     }
 
-    public function getInscription(): ?Inscription
+ /**
+ * @ORM\Column(type="json")
+ */
+ private $roles = [];
+
+    #[ORM\Column(length: 255)]
+    private ?string $login = null;
+
+    /**
+     * @var Collection<int, Inscription>
+     */
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
+    private Collection $inscriptions;
+
+ /**
+ * méthode qui renvoie une chaîne avec les informations voulues pour représenter un utilisateur.
+ */
+ public function getUserIdentifier(): string
+                                        {
+                                        return (string) $this->prenom." ".$this->nom;
+                                        }
+ public function getRoles(): array
+                                        {
+                                        $roles = $this->roles;
+                                        // guarantee every user at least has ROLE_USER
+                                        $roles[] = 'ROLE_USER';
+                                        return array_unique($roles);
+                                        }
+ public function setRoles(array $roles): self
+                                        {
+                                        $this->roles = $roles;
+                                        return $this;
+                                        }
+ public function getPassword(): string
+                                        {
+                                       // à remplacer éventuellement par la propriété contenant le mot de passe
+                                        return $this->password;
+                                        }
+ public function setPassword(string $password): self
+                                        {
+                                       // à remplacer éventuellement par la propriété contenant le mot de passe
+                                        $this->password = $password;
+                                        return $this;
+                                        }
+ public function eraseCredentials()
+                                        {
+                                        // If you store any temporary, sensitive data on the user, clear it here
+                                        // $this->plainPassword = null;
+                                        }
+
+    public function getLogin(): ?string
     {
-        return $this->inscription;
+        return $this->login;
     }
 
-    public function setInscription(?Inscription $inscription): static
+    public function setLogin(string $login): static
     {
-        $this->inscription = $inscription;
+        $this->login = $login;
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): static
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            // set the owning side to null (unless already changed)
+            if ($inscription->getParticipant() === $this) {
+                $inscription->setParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

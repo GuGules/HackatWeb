@@ -40,4 +40,15 @@ class HackathonRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+        public function findByVille($value): array
+          {
+              return $this->createQueryBuilder('h')
+                  ->andWhere('h.ville LIKE :val')
+                  ->setParameter('val', '%'.$value.'%')
+                  ->orderBy('h.id', 'ASC')
+                  ->getQuery()
+                  ->getResult()
+              ;
+          }
 }

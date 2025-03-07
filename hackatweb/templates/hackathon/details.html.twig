@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .card-body { text-align: center; }
+    .card-body img { max-width: 100%; height: auto; margin-bottom: 20px; }
+    .card-body p { margin: 10px 0; font-size: 1.2em; }
+    .card-body .title { font-weight: bold; font-size: 1.5em; margin-bottom: 20px; }
+    .card-body .date { color: #555; }
+    .card-body .places { color: #007BFF; font-weight: bold; }
+    
+    .img { width: 35rem;}   
+
+</style>
+
+<div class="row row-cols-md-12">
+    <div class="col-6">
+            <img src="{{ asset('images/robot.webp') }}" class="img" alt="Hackathon Image">
+    </div>
+    <div class="col-6">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">
+             {{ message }}
+        </div>
+    {% endfor %}
+
+
+
+    {% set today = "now"|date("Y-m-d") %}
+    {% set myDate = leHackathon.date_limiteReg|date("Y-m-d") %}
+        <h2 class="card-body title">{{ leHackathon.nom }}</h2><p class="title">{{ leHackathon.nom }}</p>
+        <p class="date">Début: {{ leHackathon.date_debut|date("d/m/Y H:i") }}</p>
+        <p class="date">Fin: {{ leHackathon.date_fin|date("d/m/Y H:i") }}</p>
+        <p class="date">Date limite d'inscription: {{ leHackathon.date_limiteReg|date("d/m/Y H:i") }}</p>
+        <p class="places">Places disponibles: {{ leHackathon.nb_places }}</p>
+        {% if myDate > today %}
+            Inscriptions ouvertes: 
+            {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                <br><br><a href="{{path('app_regHackathon',{'id':leHackathon.getId()})}}"><button class="btn btn-primary">S'inscrire au hackathon</button>
+            {% elseif not is_granted('IS_AUTHENTICATED_FULLY')%}
+                <br><br><a href="{{path('app_login')}}"><button class="btn btn-primary">Se Connecter pour s'inscrire</button></a>
+            {% endif %}
+        {% elseif myDate == today %}
+            Dernier jour d'inscription : 
+            {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+                <br><br><a href="{{path('app_regHackathon',{'id':leHackathon.getId()})}}"><button class="btn btn-primary">S'inscrire au hackathon</button>
+            {% elseif not is_granted('IS_AUTHENTICATED_FULLY')%}
+                <br><br><a href="{{path('app_login')}}"><button class="btn btn-primary">Se Connecter pour s'inscrire</button></a>
+            {% endif %}
+        {% else %}
+            Inscriptions fermées : vous ne pouvez pas vous inscrire au hackathon.
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
