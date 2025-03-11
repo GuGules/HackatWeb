@@ -25,12 +25,26 @@
              {{ message }}
         </div>
     {% endfor %}
+    {% for message in app.flashes('fail') %}
+        <div class="alert alert-danger" role="alert">
+             {{ message }}
+        </div>
+    {% endfor %}
 
 
 
     {% set today = "now"|date("Y-m-d") %}
     {% set myDate = leHackathon.date_limiteReg|date("Y-m-d") %}
-        <h2 class="card-body title">{{ leHackathon.nom }}</h2><p class="title">{{ leHackathon.nom }}</p>
+        <h2 class="card-body title">
+        {% if isFav %}
+        <a href="{{path('app_rmFav',{'id': leHackathon.getId()})}}"><i class="bi bi-star-fill"></i></a>
+        {% else %}
+        <a href="{{path('app_addFav',{'id': leHackathon.getId()})}}"><i class="bi bi-star"></i></a>
+        {% endif %}      
+        
+        &nbsp;{{ leHackathon.nom }}</h2><p class="title">{{ leHackathon.nom }}</p>
+        <p>{{ leHackathon.postalCode }} {{ leHackathon.ville }}</p>
+        <p>{{ leHackathon.rue }}</p>
         <p class="date">Début: {{ leHackathon.date_debut|date("d/m/Y H:i") }}</p>
         <p class="date">Fin: {{ leHackathon.date_fin|date("d/m/Y H:i") }}</p>
         <p class="date">Date limite d'inscription: {{ leHackathon.date_limiteReg|date("d/m/Y H:i") }}</p>

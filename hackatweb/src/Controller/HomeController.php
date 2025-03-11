@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Form\SearchFormType;
 use App\Entity\Inscription;
+use App\Entity\Participants;
 use App\Repository\HackathonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
@@ -53,6 +54,7 @@ class HomeController extends AbstractController
     
         return $this->render('hackathon/details.html.twig', [
             'leHackathon' => $leHackathon,
+            'isFav' => $this->getUser()->getFavoris()->contains($leHackathon)
         ]);
     }
 
@@ -71,4 +73,38 @@ class HomeController extends AbstractController
         $this->addFlash('success', 'Félicitations ! Vous êtes inscrit au hackathon !');
         return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
     }
+
+    #[Route('/hackathons/addFav/{id}', name: 'app_addFav')]
+    public function addFav(EntityManagerInterface $em, int $id):Response
+    {
+        $participant = $this->getUser();
+        $leHackathon = $em->getRepository(Hackathon::class)->find($id);
+        if ($participant->getFavoris()->contains($leHackathon)){
+            $this->addFlash('fail', 'Hackathon déjà dans les favoris');
+        } else {
+            $participant->addFavori($leHackathon);
+            $em->flush();
+            $this->addFlash('success', 'Hackathon ajouté aux favoris');
+        }
+        return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
+    }
+
+    #[Route('/hackathons/rmFav/{id}', name: 'app_rmFav')]
+    public function rmFav(EntityManagerInterface $em, int $id):Response
+    {
+        $participant = $this->getUser();
+        $leHackathon = $em->getRepository(Hackathon::class)->find($id);
+        if ($participant->getFavoris()->contains($leHackathon)){
+            $participant->removeFavori($leHackathon);
+            $this->addFlash('success', 'Le hackathon a été supprimé des favoris');
+            $em->flush();
+        } 
+        return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
+    }
+
+
+
+
+
+
 }

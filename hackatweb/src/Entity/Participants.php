@@ -39,6 +39,7 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->Favoris = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,41 +128,47 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
     private Collection $inscriptions;
 
+    /**
+     * @var Collection<int, Hackathon>
+     */
+    #[ORM\ManyToMany(targetEntity: Hackathon::class)]
+    private Collection $Favoris;
+
  /**
  * méthode qui renvoie une chaîne avec les informations voulues pour représenter un utilisateur.
  */
  public function getUserIdentifier(): string
-                                        {
-                                        return (string) $this->prenom." ".$this->nom;
-                                        }
+                                                       {
+                                                       return (string) $this->prenom." ".$this->nom;
+                                                       }
  public function getRoles(): array
-                                        {
-                                        $roles = $this->roles;
-                                        // guarantee every user at least has ROLE_USER
-                                        $roles[] = 'ROLE_USER';
-                                        return array_unique($roles);
-                                        }
+                                                       {
+                                                       $roles = $this->roles;
+                                                       // guarantee every user at least has ROLE_USER
+                                                       $roles[] = 'ROLE_USER';
+                                                       return array_unique($roles);
+                                                       }
  public function setRoles(array $roles): self
-                                        {
-                                        $this->roles = $roles;
-                                        return $this;
-                                        }
+                                                       {
+                                                       $this->roles = $roles;
+                                                       return $this;
+                                                       }
  public function getPassword(): string
-                                        {
-                                       // à remplacer éventuellement par la propriété contenant le mot de passe
-                                        return $this->password;
-                                        }
+                                                       {
+                                                      // à remplacer éventuellement par la propriété contenant le mot de passe
+                                                       return $this->password;
+                                                       }
  public function setPassword(string $password): self
-                                        {
-                                       // à remplacer éventuellement par la propriété contenant le mot de passe
-                                        $this->password = $password;
-                                        return $this;
-                                        }
+                                                       {
+                                                      // à remplacer éventuellement par la propriété contenant le mot de passe
+                                                       $this->password = $password;
+                                                       return $this;
+                                                       }
  public function eraseCredentials()
-                                        {
-                                        // If you store any temporary, sensitive data on the user, clear it here
-                                        // $this->plainPassword = null;
-                                        }
+                                                       {
+                                                       // If you store any temporary, sensitive data on the user, clear it here
+                                                       // $this->plainPassword = null;
+                                                       }
 
     public function getLogin(): ?string
     {
@@ -201,6 +208,30 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
                 $inscription->setParticipant(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Hackathon>
+     */
+    public function getFavoris(): Collection
+    {
+        return $this->Favoris;
+    }
+
+    public function addFavori(Hackathon $favori): static
+    {
+        if (!$this->Favoris->contains($favori)) {
+            $this->Favoris->add($favori);
+        }
+
+        return $this;
+    }
+
+    public function removeFavori(Hackathon $favori): static
+    {
+        $this->Favoris->removeElement($favori);
 
         return $this;
     }
