@@ -45,9 +45,38 @@ class HomeController extends AbstractController
             'form' => $form
         ]);
     }
+
+
+    
+    #[Route('/hackathons/showSubscriptions', name: 'app_shSub')]
+    public function showSub(EntityManagerInterface $em, Request $request):Response
+    {
+
+        $repository = $em->getRepository(Hackathon::class);
+
+        $form = $this->createForm(SearchFormType::class);
+        $form->handleRequest($request);
+
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $searchCriteria = $form->get('searchCriteria')->getData();
+            $lesHackathons = $repository->findByVille($searchCriteria);
+        } else {
+            $lesHackathons = $this->getUser()->getFavoris();
+        }
+    
+        return $this->render('hackathon/index.html.twig', [
+            'lesHackathonsAfficher' => $lesHackathons,
+            'form' => $form
+        ]);
+
+
+
+        return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
+    }
     
     #[Route('/hackathons/{id}', name: 'app_unHackathon')]
-    public function showOneSerie(EntityManagerInterface $em, int $id): Response
+    public function afficheDetailsHackathon(EntityManagerInterface $em, int $id): Response
     {
         $repository = $em->getRepository(Hackathon::class);
         $leHackathon = $repository->find($id);
@@ -101,6 +130,9 @@ class HomeController extends AbstractController
         } 
         return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
     }
+
+
+
 
 
 
