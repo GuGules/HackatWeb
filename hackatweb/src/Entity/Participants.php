@@ -131,6 +131,7 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Hackathon>
      */
+    #[ORM\JoinTable(name:"FavorisParticipants")]
     #[ORM\ManyToMany(targetEntity: Hackathon::class)]
     private Collection $Favoris;
 
