@@ -19,7 +19,7 @@
     <div class="cols mb-4">
         <div class="card">
             <div class="card-body">
-            <a href="{{path('app_unHackathon',{id:unHackathon.id})}}"><img src="asset('images/robot.webp')" class="card-img-top" alt="details {{unHackathon.nom}}"/></a>
+            <a href="{{path('app_unHackathon',{id:unHackathon.id})}}"><img src="{{asset('images/robot.webp')}}" class="card-img-top" alt="details {{unHackathon.nom}}"/></a>
                 <p>{{unHackathon.nom}}</p>
                 <p>{{unHackathon.ville}}</p>
                 <p>{{unHackathon.nb_places}}</p>

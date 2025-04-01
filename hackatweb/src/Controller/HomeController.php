@@ -48,7 +48,7 @@ class HomeController extends AbstractController
 
 
     
-    #[Route('/hackathons/showSubscriptions', name: 'app_shSub')]
+    #[Route('/hackathons/showFavoris', name: 'app_shFav')]
     public function showSub(EntityManagerInterface $em, Request $request):Response
     {
 
@@ -57,12 +57,15 @@ class HomeController extends AbstractController
         $form = $this->createForm(SearchFormType::class);
         $form->handleRequest($request);
 
+        $participant = $this->getUser();
+        dump($participant);
+
     
         if ($form->isSubmitted() && $form->isValid()) {
             $searchCriteria = $form->get('searchCriteria')->getData();
             $lesHackathons = $repository->findByVille($searchCriteria);
         } else {
-            $lesHackathons = $this->getUser()->getFavoris();
+            $lesHackathons = $participant->getFavoris();
         }
     
         return $this->render('hackathon/index.html.twig', [
@@ -73,6 +76,16 @@ class HomeController extends AbstractController
 
 
         return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
+    }
+
+    #[Route('/hackathons/inscriptions/', name: 'app_myRegHackathon')]
+    public function myInscriptions(EntityManagerInterface $em):Response
+    {
+        $participant = $this->getUser();
+        $inscriptions = $participant->getInscriptions();
+        
+        
+        return $this->render('hackathon/listeInscriptions.html.twig',['inscriptions'=>$inscriptions]);
     }
     
     #[Route('/hackathons/{id}', name: 'app_unHackathon')]

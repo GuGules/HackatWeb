@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div><h1>Liste des inscriptions</h1></div>
+<table class="table">
+    <thead>
+        <td>N° d'inscription</td>
+        <td>Hackathon</td>
+        <td>Date d'enregistrement</td>
+    </thead>
+    <tbody>
+        {% for inscription in inscriptions %}
+            <tr>
+                <td>{{inscription.id}}</td>
+                <td>{{inscription.hackathon.nom}}</td>
+                <td>{{inscription.dateSaisie|date('d-m-Y')}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -15,6 +15,9 @@ class Conf extends Evenement {
     #[ORM\Column(length: 255)]
     private ?string $theme = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $emailIntervenant = null;
+
     public function getIntervenant(): ?string
     {
         return $this->intervenant;
@@ -35,6 +38,18 @@ class Conf extends Evenement {
     public function setTheme(string $intervenant): static
     {
         $this->intervenant = $intervenant;
+
+        return $this;
+    }
+
+    public function getEmailIntervenant(): ?string
+    {
+        return $this->emailIntervenant;
+    }
+
+    public function setEmailIntervenant(?string $emailIntervenant): static
+    {
+        $this->emailIntervenant = $emailIntervenant;
 
         return $this;
     }
