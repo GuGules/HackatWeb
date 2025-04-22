@@ -38,11 +38,13 @@
     {% set today = "now"|date("Y-m-d") %}
     {% set myDate = leHackathon.date_limiteReg|date("Y-m-d") %}
         <h2 class="card-body title">
-        {% if isFav %}
-        <a href="{{path('app_rmFav',{'id': leHackathon.getId()})}}"><i class="bi bi-star-fill"></i></a>
-        {% else %}
-        <a href="{{path('app_addFav',{'id': leHackathon.getId()})}}"><i class="bi bi-star"></i></a>
-        {% endif %}      
+        {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+            {% if isFav %}
+            <a href="{{path('app_rmFav',{'id': leHackathon.getId()})}}"><i class="bi bi-star-fill"></i></a>
+            {% else %}
+            <a href="{{path('app_addFav',{'id': leHackathon.getId()})}}"><i class="bi bi-star"></i></a>
+            {% endif %}      
+        {% endif %}
         
         &nbsp;{{ leHackathon.nom }}</h2><p class="title">{{ leHackathon.nom }}</p>
         <p>{{ leHackathon.postalCode }} {{ leHackathon.ville }}</p>

@@ -93,11 +93,20 @@ class HomeController extends AbstractController
     {
         $repository = $em->getRepository(Hackathon::class);
         $leHackathon = $repository->find($id);
+
+        if ($this->getUser()!=null){
+            return $this->render('hackathon/details.html.twig', [
+                'leHackathon' => $leHackathon,
+                'isFav' => $this->getUser()->getFavoris()->contains($leHackathon)
+            ]);
+        } else {
+            return $this->render('hackathon/details.html.twig', [
+                'leHackathon' => $leHackathon,
+                'isFav' => false
+            ]);
+        }
     
-        return $this->render('hackathon/details.html.twig', [
-            'leHackathon' => $leHackathon,
-            'isFav' => $this->getUser()->getFavoris()->contains($leHackathon)
-        ]);
+        
     }
 
     #[Route('/hackathons/{id}/inscription/', name: 'app_regHackathon')]
