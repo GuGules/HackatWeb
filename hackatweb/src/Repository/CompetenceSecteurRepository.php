@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Intervenant;
+use App\Entity\CompetenceSecteur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Intervenant>
+ * @extends ServiceEntityRepository<CompetenceSecteur>
  */
-class IntervenantRepository extends ServiceEntityRepository
+class CompetenceSecteurRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Intervenant::class);
+        parent::__construct($registry, CompetenceSecteur::class);
     }
 
     //    /**
-    //     * @return Intervenant[] Returns an array of Intervenant objects
+    //     * @return CompetenceSecteur[] Returns an array of CompetenceSecteur objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('i.id', 'ASC')
+    //            ->orderBy('c.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Intervenant
+    //    public function findOneBySomeField($value): ?CompetenceSecteur
     //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

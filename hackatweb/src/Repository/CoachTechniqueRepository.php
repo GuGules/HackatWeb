@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Intervenant;
+use App\Entity\CoachTechnique;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Intervenant>
+ * @extends ServiceEntityRepository<CoachTechnique>
  */
-class IntervenantRepository extends ServiceEntityRepository
+class CoachTechniqueRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Intervenant::class);
+        parent::__construct($registry, CoachTechnique::class);
     }
 
     //    /**
-    //     * @return Intervenant[] Returns an array of Intervenant objects
+    //     * @return CoachTechnique[] Returns an array of CoachTechnique objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('i.id', 'ASC')
+    //            ->orderBy('c.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Intervenant
+    //    public function findOneBySomeField($value): ?CoachTechnique
     //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

@@ -52,10 +52,17 @@ class Hackathon
     #[ORM\Column(length: 5)]
     private ?string $postalCode = null;
 
+    /**
+     * @var Collection<int, Coach>
+     */
+    #[ORM\ManyToMany(targetEntity: Coach::class, mappedBy: 'lesHackathons')]
+    private Collection $lesCoachs;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
         $this->evenements = new ArrayCollection();
+        $this->lesCoachs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -215,6 +222,33 @@ class Hackathon
     public function setPostalCode(string $postalCode): static
     {
         $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Coach>
+     */
+    public function getLesCoachs(): Collection
+    {
+        return $this->lesCoachs;
+    }
+
+    public function addLesCoach(Coach $lesCoach): static
+    {
+        if (!$this->lesCoachs->contains($lesCoach)) {
+            $this->lesCoachs->add($lesCoach);
+            $lesCoach->addLesHackathon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLesCoach(Coach $lesCoach): static
+    {
+        if ($this->lesCoachs->removeElement($lesCoach)) {
+            $lesCoach->removeLesHackathon($this);
+        }
 
         return $this;
     }
