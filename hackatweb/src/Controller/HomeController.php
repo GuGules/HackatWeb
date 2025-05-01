@@ -35,7 +35,7 @@ class HomeController extends AbstractController
         }
         else {
 
-        $lesHackathonsTrie = $repository->findBy(['date_debut' => 'ASC']);
+        $lesHackathonsTrie = $repository->findBy([],['date_debut' => 'ASC']);
         $lesHackathons = $repository->findAll();
 
         }
