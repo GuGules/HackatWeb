@@ -10,6 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Form\SearchFormType;
 use App\Entity\Inscription;
 use App\Entity\Participants;
+use App\Entity\CoachMetier;
+use App\Entity\CoachMotivant;
+use App\Entity\CoachTechnique;
 use App\Repository\HackathonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTime;
@@ -91,16 +94,46 @@ class HomeController extends AbstractController
     #[Route('/hackathons/{id}', name: 'app_unHackathon')]
     public function afficheDetailsHackathon(EntityManagerInterface $em, int $id): Response
     {
-        $repository = $em->getRepository(Hackathon::class);
-        $leHackathon = $repository->find($id);
+        $repositoryHck = $em->getRepository(Hackathon::class);
+        $leHackathon = $repositoryHck->find($id);
+
+        $repositoryCoachMetier = $em->getRepository(CoachMetier::class)->findAll();
+        $lesCoachsMetier = array();
+        foreach($repositoryCoachMetier as $leCoachMetier){
+            if($leCoachMetier->getLesCompetencesSecteursById($id)){
+                array_push($lesCoachsMetier,$leCoachMetier);
+            }
+        }
+
+        $repositoryCoachMotivant = $em->getRepository(CoachMotivant::class)->findAll();
+        $lesCoachsMotivant = array();
+        foreach($repositoryCoachMotivant as $leCoachMotivant){
+            if($leCoachMotivant->getLesCompetencesSecteursById($id)){
+                array_push($lesCoachsMotivant,$leCoachMotivant);
+            }
+        }
+
+        $repositoryCoachTechnique = $em->getRepository(CoachTechnique::class)->findAll();
+        $lesCoachsTechnique = array();
+        foreach($repositoryCoachTechnique as $leCoachTechnique){
+            if($leCoachMetier->getLesCompetencesSecteursById($id)){
+                array_push($lesCoachsTechnique,$leCoachTechnique);
+            }
+        }
 
         if ($this->getUser()!=null){
             return $this->render('hackathon/details.html.twig', [
+                'lesCoachsMetier' => $lesCoachsMetier,
+                'lesCoachsMotivant' => $lesCoachsMotivant,
+                'lesCoachsTechnique' => $lesCoachsTechnique,
                 'leHackathon' => $leHackathon,
                 'isFav' => $this->getUser()->getFavoris()->contains($leHackathon)
             ]);
         } else {
             return $this->render('hackathon/details.html.twig', [
+                'lesCoachsMetier' => $lesCoachsMetier,
+                'lesCoachsMotivant' => $lesCoachsMotivant,
+                'lesCoachsTechnique' => $lesCoachsTechnique,
                 'leHackathon' => $leHackathon,
                 'isFav' => false
             ]);
@@ -152,13 +185,5 @@ class HomeController extends AbstractController
         } 
         return $this->redirectToRoute('app_unHackathon',['id'=> $id]);
     }
-
-
-
-
-
-
-
-
 
 }

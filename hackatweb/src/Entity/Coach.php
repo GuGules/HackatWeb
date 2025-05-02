@@ -89,4 +89,15 @@ class Coach
 
         return $this;
     }
+
+    public function getLesCompetencesSecteursById($idCollection): bool
+    {
+        foreach($this->lesHackathons as $leHackathon)
+        {
+            if($leHackathon->getId() == $idCollection){
+                return true;
+            }
+        }
+        return false;
+    }
 }

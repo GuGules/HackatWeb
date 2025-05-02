@@ -33,8 +33,6 @@
         </div>
     {% endfor %}
 
-
-
     {% set today = "now"|date("Y-m-d") %}
     {% set myDate = leHackathon.date_limiteReg|date("Y-m-d") %}
         <h2 class="card-body title">
@@ -49,6 +47,57 @@
         &nbsp;{{ leHackathon.nom }}</h2><p class="title">{{ leHackathon.nom }}</p>
         <p>{{ leHackathon.postalCode }} {{ leHackathon.ville }}</p>
         <p>{{ leHackathon.rue }}</p>
+        {% if lesCoachsMetier is not null and lesCoachsTechnique is not null and lesCoachsMotivant is not null %}
+            {% for leCoach in lesCoachsMetier %}
+            <div>
+                <p>
+                    {{leCoach.nom}} : coach metier :
+                    {% for laCompetenceSecteurs in leCoach.lesCompetencesSecteurs %}
+                        {{laCompetenceSecteurs.libelle}}
+                    {% endfor %}
+                    {% if leCoach.linkedinAccount != null %} 
+                    :
+                        <a href="{{leCoach.linkedinAccount}} " target="_blank">
+                            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" width="32" height="32">
+                        </a>
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% for leCoach in lesCoachsTechnique %}
+            <div>
+                <p>
+                    {{leCoach.nom}} : coach technique :
+                    {% for laCompetenceTech in leCoach.lesCompetencesTechs %}
+                        {{laCompetenceTech.libelle}}
+                    {% endfor %}
+                    {% if leCoach.linkedinAccount != null %} 
+                    :
+                        <a href="{{leCoach.linkedinAccount}} " target="_blank">
+                            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" width="32" height="32">
+                        </a>
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+            {% for leCoach in lesCoachsMotivant %}
+            <div>
+                <p>
+                    {{leCoach.nom}} :  coach motivant :
+                    {{leCoach.specialite}}
+                    {% if leCoach.linkedinAccount != null %} 
+                    :
+                        <a href="{{leCoach.linkedinAccount}} " target="_blank">
+                            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" width="32" height="32">
+                        </a>
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>il n'y a pas de coach pour cet hackathon</p>
+        {% endif %}
+
         <p class="date">Début: {{ leHackathon.date_debut|date("d/m/Y H:i") }}</p>
         <p class="date">Fin: {{ leHackathon.date_fin|date("d/m/Y H:i") }}</p>
         <p class="date">Date limite d'inscription: {{ leHackathon.date_limiteReg|date("d/m/Y H:i") }}</p>
